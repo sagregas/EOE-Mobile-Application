@@ -2,9 +2,7 @@
 //  AppDelegate.swift
 //  7a_EOE
 //
-//  Created by Rohith Raju on 11/11/16.
-//  Copyright © 2016 Rohith Raju. All rights reserved.
-//
+
 
 import UIKit
 import CoreData
@@ -16,10 +14,69 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        
+        // Override point for customization after application launch.
+        application.applicationIconBadgeNumber = 0
+
+        if(UIApplication.instancesRespondToSelector(#selector(UIApplication.registerUserNotificationSettings(_:)))) {
+            UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Alert , .Badge], categories: nil))
+        }
+        
+        
+        
+        
+        let userId = NSUserDefaults.standardUserDefaults().valueForKey("UserId")
+        print("userId:\(userId))")
+        if (userId != nil){
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            
+            let main = storyboard.instantiateViewControllerWithIdentifier("tab") as! tabBarViewController
+            
+            window?.rootViewController = main
+            
+            
+            //            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
+            //            SWRevealViewController *main = (SWRevealViewController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+            //
+            //            self.window.rootViewController = main;
+            
+        }else{
+            
+            
+        }
+
         // Override point for customization after application launch.
         return true
     }
 
+    
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+    
+        handleLocalNotification(notification, app: application)
+    
+    }
+    
+//    -(void)handleNotification: (UILocalNotification *)notification application:(UIApplication *)application
+//    {
+//    NSString *title = [notification.userInfo objectForKey:@"Title"];
+//    
+//    [[[UIAlertView alloc]initWithTitle:@"Smart Alarm" message:title delegate:self cancelButtonTitle:@"Answer the Teaser" otherButtonTitles: nil] show];
+//    
+//    application.applicationIconBadgeNumber = 0;
+//    }
+    
+
+    func handleLocalNotification(not: UILocalNotification,app: UIApplication){
+        
+        let title = not.userInfo 
+        print("title:\(title)")
+        
+        app.applicationIconBadgeNumber = 0
+
+    }
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
