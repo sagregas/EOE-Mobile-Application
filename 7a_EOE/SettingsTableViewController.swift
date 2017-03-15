@@ -8,15 +8,16 @@
 
 import UIKit
 
-class SettingsTableViewController: UITableViewController {
+class SettingsTableViewController: UITableViewController,CoreDataHelperDelegate {
 
     
     var tableArray = [String]()
-    
+    var coreData = CoreDataHelper()
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableArray = ["Reminders","User Treatment","About"]
+        tableArray = ["Reminders","User Treatment","About","Log Out"]
+        coreData.delegate = self
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -38,7 +39,7 @@ class SettingsTableViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 3
+        return tableArray.count
     }
 
     
@@ -59,9 +60,21 @@ class SettingsTableViewController: UITableViewController {
             performSegueWithIdentifier("treatment", sender: self)
 
         }
-        else{
+        else if indexPath.row == 2{
             performSegueWithIdentifier("about", sender: self)
 
+        }else{
+            
+            coreData.deleteAllData("Food")
+            
+            
+            
+            UIApplication.sharedApplication().cancelAllLocalNotifications()
+            NSUserDefaults.standardUserDefaults().removeObjectForKey("UserId")
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            
+            let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("nextView") as! ViewController
+         self.navigationController?.pushViewController(nextViewController, animated: true)
         }
         
         

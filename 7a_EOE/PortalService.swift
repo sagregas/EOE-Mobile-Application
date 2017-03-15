@@ -18,19 +18,28 @@ import Alamofire
     
     optional func successForInsertQOL(success:String)
     optional func FailureForInsertQOL(error:String)
-    
+    optional func FailureForInsertQOLError(error:String)
+
     optional func successForUploadImage(success:NSDictionary)
     optional func FailureForUploadImage(error:String)
     
     optional func successForInsertFood(success:NSArray)
     optional func FailureForInsertFood(error:String)
-    
+    optional func FailureForInsertFoodError(error:String)
+
     optional func successForGetFood(success:NSArray)
     optional func FailureForGetFood(error:String)
     
     
     optional func successForInsertSymptoms(success:String)
     optional func FailureForInsertSumptoms(error:String)
+    optional func FailureForInsertSymptomsError(error:String)
+    
+    optional func successForInsertUT(success:String)
+    optional func FailureForInsertUT(error:String)
+    optional func FailureForInsertUTError(error:String)
+
+    
 }
 
 
@@ -62,7 +71,7 @@ class PortalService: NSObject {
     
     func insertUserNameAndPassword(name: String, password: String,email: String,DOB: String,gender: String,race:String,hispanic: String,grade: String,eoe: String,father: String,mother: String,income: String) {
         
-        Alamofire.request(.POST, "https://people.cs.clemson.edu/~rraju/eoeScripts/insertpatient.php", parameters: ["email": name,"password":password,"patientName":name,"gender":gender,"date":DOB,"Grade":grade,"Ethnicity":hispanic,"Race":race,"LenDisease":eoe,"FamIncome":income,"FathEduc":father,"MotherEduc":mother])
+        Alamofire.request(.POST, "https://people.cs.clemson.edu/~rraju/eoeScripts/insertpatient.php", parameters: ["email": email,"password":password,"patientName":name,"gender":gender,"date":DOB,"Grade":grade,"Ethnicity":hispanic,"Race":race,"LenDisease":eoe,"FamIncome":income,"FathEduc":father,"MotherEduc":mother])
             .responseString { (request, response, result) in
 
                 switch result {
@@ -80,17 +89,24 @@ class PortalService: NSObject {
         }
         
         
+        
+        
+        
+        
     }
     
     
-    func insertQOL(s1q1:String,s1q2:String,s1q3:String,s1q4:String,s1q5:String,s1q6:String,s2q1:String,s2q2:String,s2q3:String,s2q4:String,s3q1:String,s3q2:String,s3q3:String,s3q4:String,s3q5:String,s4q1:String,s4q2:String,s4q3:String,s4q4:String,s4q5:String,s4q6:String,s5q1:String,s5q2:String,s5q3:String,s5q4:String,s5q5:String,s6q1:String,s6q2:String,s6q3:String,s6q4:String,s7q1:String,s7q2:String,s7q3:String,s8:String,s8q1:String,s8q2:String,switch1: String){
-       
+    
+    
+    
+    func insertQOL(s1q1:String,s1q2:String,s1q3:String,s1q4:String,s1q5:String,s1q6:String,s2q1:String,s2q2:String,s2q3:String,s2q4:String,s3q1:String,s3q2:String,s3q3:String,s3q4:String,s3q5:String,s4q1:String,s4q2:String,s4q3:String,s4q4:String,s4q5:String,s4q6:String,s5q1:String,s5q2:String,s5q3:String,s5q4:String,s5q5:String,s6q1:String,s6q2:String,s6q3:String,s6q4:String,s7q1:String,s7q2:String,s7q3:String,s8:String,s8q1:String,s8q2:String,switch1: String, sym1score:String, sym2score:String, treatscore:String, worryscore:String, commscore:String, fescore:String, ffscore:String, totscore:String, symscore:String){
+        
         
         let timeCurrent = NSDate()
         let dateFormat = NSDateFormatter()
         dateFormat.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
-        let values:[String:String] = ["user_patientid":"\(NSUserDefaults.standardUserDefaults().valueForKey("UserId")!)","time":dateFormat.stringFromDate(timeCurrent),"s1q1":s1q1,"s1q2":s1q2,"s1q3":s1q3,"s1q4":s1q4,"s1q5":s1q5,"s1q6":s1q6,"s2q1":s2q1,"s2q2":s2q2,"s2q3":s2q3,"s2q4":s2q4,"s3q1":s3q1,"s3q2":s3q2,"s3q3":s3q3,"s3q4":s3q4,"s3q5":s3q5,"s4q1":s4q1,"s4q2":s4q2,"s4q3":s4q3,"s4q4":s4q4,"s4q5":s4q5,"s4q6":s4q6,"s5q1":s5q1,"s5q2":s5q2,"s5q3":s5q3,"s5q4":s5q4,"s5q5":s5q5,"s6q1":s6q1,"s6q2":s6q2,"s6q3":s6q3,"s6q4":s6q4,"s7q1":s7q1,"s7q2":s7q2,"s7q3":s7q3,"s8":s8,"s8q1":s8q1,"s8q2":s8q2,"s67":switch1]
+        let values:[String:String] = ["user_patientid":"\(NSUserDefaults.standardUserDefaults().valueForKey("UserId")!)","time":dateFormat.stringFromDate(timeCurrent),"s1q1":s1q1,"s1q2":s1q2,"s1q3":s1q3,"s1q4":s1q4,"s1q5":s1q5,"s1q6":s1q6,"s2q1":s2q1,"s2q2":s2q2,"s2q3":s2q3,"s2q4":s2q4,"s3q1":s3q1,"s3q2":s3q2,"s3q3":s3q3,"s3q4":s3q4,"s3q5":s3q5,"s4q1":s4q1,"s4q2":s4q2,"s4q3":s4q3,"s4q4":s4q4,"s4q5":s4q5,"s4q6":s4q6,"s5q1":s5q1,"s5q2":s5q2,"s5q3":s5q3,"s5q4":s5q4,"s5q5":s5q5,"s6q1":s6q1,"s6q2":s6q2,"s6q3":s6q3,"s6q4":s6q4,"s7q1":s7q1,"s7q2":s7q2,"s7q3":s7q3,"s8":s8,"s8q1":s8q1,"s8q2":s8q2,"s67":switch1, "sym1score":sym1score, "sym2score":sym2score, "treatscore":treatscore, "worryscore":worryscore,"commscore":commscore, "fescore":fescore, "ffscore":ffscore,"totscore":totscore,"symscore":symscore]
         
         let request = NSMutableURLRequest(URL: NSURL(string: "https://people.cs.clemson.edu/~rraju/eoeScripts/insertQol.php")!)
         request.timeoutInterval = 35
@@ -100,6 +116,8 @@ class PortalService: NSObject {
         request.addValue("text/html", forHTTPHeaderField: "Accept")
         request.setValue("iOS/8.0", forHTTPHeaderField: "User-Agent")
         request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(["qol":values], options: [])
+        
+        
         
         // or if you think the conversion might actually fail (which is unlikely if you built `parameters` yourself)
         //
@@ -112,6 +130,8 @@ class PortalService: NSObject {
         let task = session.dataTaskWithRequest(request) { data, response, error in
             guard let data = data where error == nil else {
                 print("error: \(error)")
+                self.delegate?.FailureForInsertQOLError!((error?.localizedDescription)!)
+
                 return
             }
             
@@ -121,7 +141,7 @@ class PortalService: NSObject {
             do {
                 if let json = String(data: data, encoding: NSUTF8StringEncoding){
                     
-                
+                    
                     let success = json                                  // Okay, the `json` is here, let's get the value for 'success' out of it
                     self.delegate?.successForInsertQOL!("done")
                     print("Success: \(success)")
@@ -131,15 +151,14 @@ class PortalService: NSObject {
                     print("Error could not parse JSON: \(jsonStr)")
                 }
             }
-        
-        
+            
+            
         }
         
         task.resume()
-    
-    
+        
+        
     }
-    
     
     func uploadImage(imageToUpload: UIImage){
         
@@ -292,44 +311,98 @@ class PortalService: NSObject {
         dateFormat.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
         
-        
-        
-        
-        let values:[String:String] = ["user_patientid":"\(NSUserDefaults.standardUserDefaults().valueForKey("UserId")!)","time":dateFormat.stringFromDate(timeCurrent),"imgName":imageName,"whoisinput":parent,"wherelinternal":whereHome,"whichMealinternal":whichMeal,"whointernal":whoAlone,"feelBeforeint":feelBefore,"feelAfterint":feelAfter,"allergicint":allergic,"others":others]
+        let values:[String:String] = ["user_patientid":"\(NSUserDefaults.standardUserDefaults().valueForKey("UserId")!)","time":dateFormat.stringFromDate(timeCurrent),"imgName":"https://people.cs.clemson.edu/~rraju/eoeScripts/eoeImgs/\(imageName)","whoisinput":parent,"wherelinternal":whereHome,"whichMealinternal":whichMeal,"whointernal":whoAlone,"feelBeforeint":feelBefore,"feelAfterint":feelAfter,"allergicint":allergic,"others":others]
         
         
         print("valuesForFood:\(values)")
         
         
-        Alamofire.request(.POST, "https://people.cs.clemson.edu/~rraju/eoeScripts/insertfoodDiary.php", parameters: ["food": values],encoding: .JSON
-            )
+//        Alamofire.request(.POST, "https://people.cs.clemson.edu/~rraju/eoeScripts/insertfoodDiary.php", parameters: ["food": values],encoding: .JSON
+//            )
+//            
+//            
+//           .responseJSON { (request, response, result) in
+//                switch result {
+//                    
+//                    
+//                    
+//                case .Success(let JSON):
+//                    
+//                    print("Success with JSON: \(JSON)")
+//                    // self.delegate?.successForInsertuser!(JSON as! NSArray)
+//                    self.delegate?.successForInsertFood!(JSON as! NSArray)
+//                    
+//                    
+//                case .Failure(let data, let error):
+//                    print("Request failed with error: \(error)")
+//                    
+//                    if let data = data {
+//                        
+//                        
+//                        print("Response data: \(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
+//                        // self.delegate?.FailureForInsertuser!("\(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
+//                        
+//                        self.delegate?.FailureForInsertFood!("success")
+//                    }
+//                }
+//        }
+        
+        
+        
+        
+        
+        
+        
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://people.cs.clemson.edu/~rraju/eoeScripts/insertfoodDiary.php")!)
+        request.timeoutInterval = 35
+        let session = NSURLSession.sharedSession()
+        request.HTTPMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("text/html", forHTTPHeaderField: "Accept")
+        request.setValue("iOS/8.0", forHTTPHeaderField: "User-Agent")
+        request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(["food":values], options: [])
+        
+        // or if you think the conversion might actually fail (which is unlikely if you built `parameters` yourself)
+        //
+        // do {
+        //    request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
+        // } catch {
+        //    print(error)
+        // }
+        
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            guard let data = data where error == nil else {
+                print("error: \(error)")
+                self.delegate?.FailureForInsertFoodError!((error?.localizedDescription)!)
+                return
+            }
             
+            // this, on the other hand, can quite easily fail if there's a server error, so you definitely
+            // want to wrap this in `do`-`try`-`catch`:
             
-           .responseJSON { (request, response, result) in
-                switch result {
+            do {
+                
+                let json = try! NSJSONSerialization.JSONObjectWithData(data, options: []) as! NSArray
+                
+                if  json.count > 0
+                {
                     
                     
-                    
-                case .Success(let JSON):
-                    
-                    print("Success with JSON: \(JSON)")
-                    // self.delegate?.successForInsertuser!(JSON as! NSArray)
-                    self.delegate?.successForInsertFood!(JSON as! NSArray)
-                    
-                    
-                case .Failure(let data, let error):
-                    print("Request failed with error: \(error)")
-                    
-                    if let data = data {
-                        
-                        
-                        print("Response data: \(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
-                        // self.delegate?.FailureForInsertuser!("\(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
-                        
-                        self.delegate?.FailureForInsertFood!("success")
-                    }
+                    let success = json                                  // Okay, the `json` is here, let's get the value for 'success' out of it
+                    self.delegate?.successForInsertFood!(success)
+                    print("Success: \(success)")
+                } else {
+                    let jsonStr = String(data: data, encoding: NSUTF8StringEncoding)    // No error thrown, but not NSDictionary
+                    self.delegate?.FailureForInsertFood!("error")
+                    print("Error could not parse JSON: \(jsonStr)")
                 }
+            }
+            
+            
         }
+        
+        task.resume()
     }
     
     func getFoodDiary(){
@@ -376,27 +449,6 @@ class PortalService: NSObject {
         print("valuesForSymptoms:\(values)")
         
         
-//        Alamofire.request(.POST, "https://people.cs.clemson.edu/~rraju/eoeScripts/insertSymptoms23.php", parameters: ["symptoms": values],encoding: .JSON
-//            )
-//            
-//            
-//            .responseJSON { request, response, result in
-//                switch result {
-//                    
-//                    
-//                    
-//                case .Success(let JSON):
-//                    print("Success with JSON: \(JSON)")
-//                // self.delegate?.successForInsertuser!(JSON as! NSArray)
-//                case .Failure(let data, let error):
-//                    print("Request failed with error: \(error)")
-//                    
-//                    if let data = data {
-//                        print("Response data: \(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
-//                        // self.delegate?.FailureForInsertuser!("\(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
-//                    }
-//                }
-//        }
         let request = NSMutableURLRequest(URL: NSURL(string: "https://people.cs.clemson.edu/~rraju/eoeScripts/insertSymptoms.php")!)
 
         let session = NSURLSession.sharedSession()
@@ -418,7 +470,10 @@ class PortalService: NSObject {
         
         let task = session.dataTaskWithRequest(request) { data, response, error in
             guard let data = data where error == nil else {
+                
+                
                 print("error: \(error)")
+                self.delegate?.FailureForInsertSymptomsError!("error")
                 return
             }
             
@@ -449,33 +504,81 @@ class PortalService: NSObject {
 
 }
 
+    
+    
+    
+    func insertUserTreatment(steroid:String,dietary:String,foodElimination:String,allergy_syptoms:String,allergy_syptoms_food:String,elementalDiet:String,exclElemental:String,formula:String,foodTrial:String,foodTrial_food:String){
+        
+        
+        let timeCurrent = NSDate()
+        let dateFormat = NSDateFormatter()
+        dateFormat.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        let values:[String:String] = ["user_patientid":"\(NSUserDefaults.standardUserDefaults().valueForKey("UserId")!)","time":dateFormat.stringFromDate(timeCurrent),"steroid":steroid,"dietary":dietary,"foodElimination":foodElimination,"allergy_syptoms":allergy_syptoms,"allergy_syptoms_food":allergy_syptoms_food,"elementalDiet":elementalDiet,"exclElemental":exclElemental,"formula":formula,"foodTrial":foodTrial,"foodTrial_food":foodTrial_food]
+        
+        
+        print("valuesForSymptoms:\(values)")
+        
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://people.cs.clemson.edu/~rraju/eoeScripts/insertUT.php")!)
+        
+        let session = NSURLSession.sharedSession()
+        request.HTTPMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("text/html", forHTTPHeaderField: "Accept")
+        request.setValue("iOS/8.0", forHTTPHeaderField: "User-Agent")
+        request.timeoutInterval = 35
+        
+        request.HTTPBody = try! NSJSONSerialization.dataWithJSONObject(["ut":values], options: [])
+        
+        // or if you think the conversion might actually fail (which is unlikely if you built `parameters` yourself)
+        //
+        // do {
+        //    request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
+        // } catch {
+        //    print(error)
+        // }
+        
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            guard let data = data where error == nil else {
+                
+                
+                print("error: \(error)")
+                self.delegate?.FailureForInsertUTError!("error")
+                return
+            }
+            
+            // this, on the other hand, can quite easily fail if there's a server error, so you definitely
+            // want to wrap this in `do`-`try`-`catch`:
+            
+            do {
+                if let json = String(data: data, encoding: NSUTF8StringEncoding){
+                    
+                    
+                    let success = json                                  // Okay, the `json` is here, let's get the value for 'success' out of it
+                    self.delegate?.successForInsertUT!("success")
+                    print("Success: \(success)")
+                } else {
+                    let jsonStr = String(data: data, encoding: NSUTF8StringEncoding)    // No error thrown, but not NSDictionary
+                    self.delegate?.FailureForInsertUT!("error")
+                    print("Error could not parse JSON: \(jsonStr)")
+                }
+            } catch let parseError {
+                print(parseError)                                                          // Log the error thrown by `JSONObjectWithData`
+                let jsonStr = String(data: data, encoding: NSUTF8StringEncoding)
+                print("Error could not parse JSON: '\(jsonStr)'")
+            }
+        }
+        
+        task.resume()
+        
+        
+    }
+    
+    
+    
 }
 
-//        .responseJSON { request, response, result in
-//        switch result {
-//
-//
-//
-//        case .Success(let JSON):
-//            print("Success with JSON: \(JSON)")
-//            self.delegate?.successForInsertSymptoms!("success")
-//        case .Failure(let data, let error):
-//            
-//            print("Request failed with error: \(error)")
-//            if let data = data {
-//                print("Response data: \(NSString(data: data, encoding: NSUTF8StringEncoding)!)")
-//                self.delegate?.FailureForInsertSumptoms!("error")
-//                
-//            }
-//                }//switch
-//            }//json
-//    
-//        }//insert symptoms
 
-
-
-
-
-//NSObject
 
 

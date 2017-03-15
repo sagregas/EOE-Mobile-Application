@@ -11,6 +11,8 @@ import MobileCoreServices
 
 class AddFoodViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate,CoreDataHelperDelegate,PortalServiceDelegate {
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var viewForActivityIndicator: UIView!
     @IBOutlet weak var companyOutlet: UIButton!
     @IBOutlet weak var mealOutlet: UIButton!
     @IBOutlet weak var eatFoodOutlet: UIButton!
@@ -56,7 +58,12 @@ class AddFoodViewController: UIViewController,UIPickerViewDelegate,UIPickerViewD
         heightOthers.constant = 0.0
         othersTextfield.hidden = true
         
+        self.pickerView.backgroundColor = UIColor.grayColor()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        hideUnhideActivity(true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -232,17 +239,27 @@ class AddFoodViewController: UIViewController,UIPickerViewDelegate,UIPickerViewD
     
     func showCustomPicker(){
         
-        self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
-        self.frontView.userInteractionEnabled = false
-        self.pickerView.hidden = false
-        self.toolBar.hidden = false
+        
+        
+        UIView.animateWithDuration(0, animations: {
+            self.othersTextfield.resignFirstResponder()
+        }) { (Bool) in
+            
+            self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
+            self.frontView.userInteractionEnabled = false
+            self.pickerView.hidden = false
+            self.toolBar.hidden = false
+        }
+        
+        
+      
         
     }
     
     func hideCustomPicker(){
         
         self.scrollView.frame=CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height+260);
-        self.scrollView.contentSize=CGSizeMake(self.view.frame.size.width,1000);
+        self.scrollView.contentSize=CGSizeMake(self.view.frame.size.width,700);
         self.frontView.userInteractionEnabled = true
         self.pickerView.hidden = true
         self.toolBar.hidden = true
@@ -348,6 +365,27 @@ class AddFoodViewController: UIViewController,UIPickerViewDelegate,UIPickerViewD
         
         service.delegate = self
        service.uploadImage(imageView.image!)
+        
+        
+        hideUnhideActivity(false)
+    }
+    
+    
+    func result(){
+        
+        if othersTextfield.text?.characters.count > 0 {
+            othersStr = othersTextfield.text!
+        }
+        
+        
+        WhereDidYouEat = (eatFoodOutlet.titleLabel?.text)!
+        whichMeal = (mealOutlet.titleLabel?.text)!
+        whoDidYouEat = (companyOutlet.titleLabel?.text)!
+        
+        
+        
+        service.delegate = self
+        service.uploadImage(imageView.image!)
     }
     /*
     // MARK: - Navigation
@@ -382,28 +420,68 @@ class AddFoodViewController: UIViewController,UIPickerViewDelegate,UIPickerViewD
     }
     
     func FailureForInsertFood(error: String) {
+        hideUnhideActivity(true)
+
         alertViewFunc("failed to store food data")
     }
     
+    
+    func FailureForInsertFoodError(error: String) {
+        result()
+    }
+    
     func successForInserfoodCore(success: String) {
+        hideUnhideActivity(true)
+
         alertViewFunc("successfully stored food to db ")
 
     }
     
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        othersTextfield.resignFirstResponder()
+    }
+    
     func FailureForinsertFoodCore(error: String) {
-        
+        hideUnhideActivity(true)
+  
     }
     
     func alertViewFunc(msg: String)  {
         
-        
-        let alertController = UIAlertController(title: "\(msg)", message: "", preferredStyle: .Alert)
-        
-        let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
-        alertController.addAction(defaultAction)
-        
-        presentViewController(alertController, animated: true, completion: nil)
+        dispatch_async(dispatch_get_main_queue()) {
+            let alertController = UIAlertController(title: "\(msg)", message: "", preferredStyle: .Alert)
+            
+            let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+            alertController.addAction(defaultAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
         
     }
+    
+    
+    func hideUnhideActivity(bool: Bool){
+        
+        viewForActivityIndicator.hidden = bool
+        
+        if bool == false {
+            self.view.bringSubviewToFront(self.viewForActivityIndicator)
+           // activityIndicator.center = scrollView.center
+            activityIndicator.startAnimating()
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.view.bringSubviewToFront(self.scrollView)
+                self.activityIndicator.stopAnimating()
+                self.viewForActivityIndicator.hidden = bool
+               // self.viewForActivityIndicator.removeFromSuperview()
+
+            })
+            
+        }
+        
+        
+    }
+    
 
 }

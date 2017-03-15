@@ -24,44 +24,54 @@ class CoreDataHelper: NSObject {
     
     func insertFoodItems(food:NSArray){
         
-        let ArrayOfData = food[0] as! NSDictionary
         
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedObjectContext = appDel.managedObjectContext
+      
         
-        let entity = NSEntityDescription.insertNewObjectForEntityForName("Food", inManagedObjectContext: managedObjectContext)
         
-        let diaryID = ArrayOfData.valueForKey("diaryID")?.intValue
-        let patientID = ArrayOfData.valueForKey("patientID")?.intValue
+     
 
 
-//
-//        
-        entity.setValue(NSNumber(int: diaryID!), forKey: "diaryID")
-        entity.setValue(NSNumber(int: patientID!), forKey: "patientID")
-
-        entity.setValue(ArrayOfData.valueForKey("feelAfter"), forKey: "feelAfter")
-        entity.setValue(ArrayOfData.valueForKey("feelBefore"), forKey: "feelBefore")
-        entity.setValue(ArrayOfData.valueForKey("image"), forKey: "image")
-        entity.setValue(ArrayOfData.valueForKey("inputPerson"), forKey: "inputPerson")
-        entity.setValue(ArrayOfData.valueForKey("location"), forKey: "location")
-        entity.setValue(ArrayOfData.valueForKey("meal"), forKey: "meal")
-        entity.setValue(ArrayOfData.valueForKey("others"), forKey: "others")
-        entity.setValue(ArrayOfData.valueForKey("partner"), forKey: "partner")
-        entity.setValue(ArrayOfData.valueForKey("someone"), forKey: "someone")
-        entity.setValue(ArrayOfData.valueForKey("time"), forKey: "time")
-        entity.setValue(ArrayOfData.valueForKey("worry"), forKey: "worry")
+     //   let ArrayOfData = food[0] as! NSDictionary
         
-        do {
+        for ArrayOfData in food {
             
-            try managedObjectContext.save()
-            self.delegate?.successForInserfoodCore!("done")
+            let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let managedObjectContext = appDel.managedObjectContext
             
-        } catch {
-            self.delegate?.FailureForinsertFoodCore!("error")
-            print("There was a problem!")
+            let entity = NSEntityDescription.insertNewObjectForEntityForName("Food", inManagedObjectContext: managedObjectContext)
+            let diaryID = ArrayOfData.valueForKey("diaryID")?.intValue
+            let patientID = ArrayOfData.valueForKey("patientID")?.intValue
             
+            entity.setValue(NSNumber(int: diaryID!), forKey: "diaryID")
+            entity.setValue(NSNumber(int: patientID!), forKey: "patientID")
+            
+            entity.setValue(ArrayOfData.valueForKey("feelAfter"), forKey: "feelAfter")
+            entity.setValue(ArrayOfData.valueForKey("feelBefore"), forKey: "feelBefore")
+            entity.setValue(ArrayOfData.valueForKey("image"), forKey: "image")
+            entity.setValue(ArrayOfData.valueForKey("inputPerson"), forKey: "inputPerson")
+            entity.setValue(ArrayOfData.valueForKey("location"), forKey: "location")
+            entity.setValue(ArrayOfData.valueForKey("meal"), forKey: "meal")
+            entity.setValue(ArrayOfData.valueForKey("others"), forKey: "others")
+            entity.setValue(ArrayOfData.valueForKey("partner"), forKey: "partner")
+            entity.setValue(ArrayOfData.valueForKey("someone"), forKey: "someone")
+            entity.setValue(ArrayOfData.valueForKey("time"), forKey: "time")
+            entity.setValue(ArrayOfData.valueForKey("worry"), forKey: "worry")
+            
+            do {
+                
+                try managedObjectContext.save()
+                
+            } catch {
+                self.delegate?.FailureForinsertFoodCore!("error")
+                print("There was a problem!")
+                
+            }
         }
+        
+        
+        self.delegate?.successForInserfoodCore!("done")
+
+       
     
     }
     
@@ -95,7 +105,7 @@ class CoreDataHelper: NSObject {
                     food.companyToEat = "\(res.valueForKey("partner")!)"
                     food.placeYouAte = "\(res.valueForKey("location")!)"
                     food.mealType = "\(res.valueForKey("meal")!)"
-                    food.foodImg = "https://people.cs.clemson.edu/~rraju/eoeScripts/eoeImgs/\(res.valueForKey("image")!)"
+                    food.foodImg = "\(res.valueForKey("image")!)"
                     //print("\(food.foodImg)")
                     
                     foodArray.append(food)
@@ -105,6 +115,9 @@ class CoreDataHelper: NSObject {
                 self.delegate?.successForRetfoodCore!(foodArray)
                 
                // print("leagueDictionary:\(LeagueDictionary),\(LeagueDictionary[1])")
+            }else{
+                self.delegate?.FailureForRetFoodCore!("")
+
             }
         }
         catch {
@@ -115,6 +128,24 @@ class CoreDataHelper: NSObject {
         
     }
     
-    
+    func deleteAllData(entity: String)
+    {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
+        let fetchRequest = NSFetchRequest(entityName: entity)
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        do
+        {
+            let results = try managedContext.executeFetchRequest(fetchRequest)
+            for managedObject in results
+            {
+                let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
+                managedContext.deleteObject(managedObjectData)
+            }
+        } catch let error as NSError {
+            print("Detele all data in \(entity) error : \(error) \(error.userInfo)")
+        }
+    }
     
 }

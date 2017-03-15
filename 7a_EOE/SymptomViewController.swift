@@ -6,8 +6,14 @@
 
 import UIKit
 
+
+
 class SymptomViewController: UIViewController,PortalServiceDelegate {
     
+    @IBOutlet weak var hideViewFront: UIView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var viewForActivityIndicator: UIView!
     var service = PortalService()
     var q1f = -1
     var q1s = -1
@@ -140,15 +146,120 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
     
     @IBOutlet weak var nineSubSegement: UISegmentedControl!
     
+    @IBOutlet weak var hideView: UIView!
+    
+    @IBOutlet weak var hideLbl: UILabel!
+    
     
     override func viewDidLoad() {
+        
+        
         super.viewDidLoad()
         hideUnhideSubQuestions()
-//        self.tabBarController?.navigationItem.hidesBackButton = true
+        
+        
+        
+        // self.tabBarController?.navigationItem.hidesBackButton = true
 //        self.tabBarController?.navigationItem.setHidesBackButton(true, animated: false)
 
         // Do any additional setup after loading the view.
         //[self.navigationItem setHidesBackButton:YES]
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        InitialhideForm()
+        hideUnhideActivity(true)
+    }
+    
+    func hideForm(){
+        
+        print("symp:\(NSUserDefaults.standardUserDefaults().valueForKey("symptomsDate"))")
+        if NSUserDefaults.standardUserDefaults().valueForKey("symptomsDate") != nil
+        {
+            let differenceForSeven = 7
+            let dateStored = "\(NSUserDefaults.standardUserDefaults().valueForKey("symptomsDate")!)"
+            let formatter = NSDateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+            let dateStr = formatter.dateFromString(dateStored)
+            
+            let differenceBtwTwo = differenceInDaysWithDate(dateStr!)
+            
+            let diff = differenceForSeven - differenceBtwTwo
+            
+            if diff == 0{
+               
+                self.hideViewFront.hidden = true
+                self.scrollView.scrollEnabled = true
+
+                // close new view
+            }else{
+              
+            
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.hideViewFront.hidden = false
+                    self.hideLbl.text = "The survey has been completed. Fill the form after \(diff) days"
+                    self.scrollView.scrollToTop()
+                    self.scrollView.scrollEnabled = false
+                    self.viewDidLoad()
+                    self.viewWillAppear(true)
+                    
+                })
+                
+                //print remaining days
+            }
+            
+        }
+    }
+    
+    
+    func InitialhideForm(){
+        if NSUserDefaults.standardUserDefaults().valueForKey("symptomsDate") != nil
+        {
+            let differenceForSeven = 7
+            let dateStored = "\(NSUserDefaults.standardUserDefaults().valueForKey("symptomsDate")!)"
+            let formatter = NSDateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+            let dateStr = formatter.dateFromString(dateStored)
+            
+            let differenceBtwTwo = differenceInDaysWithDate(dateStr!)
+            
+            let diff = differenceForSeven - differenceBtwTwo
+            
+            if diff == 0{
+                
+                self.hideViewFront.hidden = true
+                // close new view
+            }else{
+                
+                
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    self.hideViewFront.hidden = false
+                    self.hideLbl.text = "The survey has been completed.Fill the form after \(diff) days"
+                    self.scrollView.scrollToTop()
+                    self.scrollView.scrollEnabled = false
+                    
+                })
+                
+                //print remaining days
+            }
+            
+        }
+    }
+    
+    func differenceInDaysWithDate(date: NSDate) -> Int
+    {
+        let calendar: NSCalendar = NSCalendar.currentCalendar()
+        
+        
+        let date1 = calendar.startOfDayForDate(NSDate())
+        let date2 = calendar.startOfDayForDate(date)
+        
+        let components = calendar.components(.Day, fromDate: date2, toDate: date1, options: [])
+        let days = components.day
+        return days
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -187,6 +298,7 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segmentedControl.selectedSegmentIndex == 0)
         {
+            q1s = -1
             
             heightBadChest.constant = 0.0
             one_sub.hidden = true 
@@ -229,6 +341,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segementHeartBurn.selectedSegmentIndex == 0)
         {
+            q2s = -1
+
             heightHeartBurn.constant = 0.0
             two_sub.hidden = true
         }
@@ -274,6 +388,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segmentStomachAche.selectedSegmentIndex == 0)
         {
+            q3s = -1
+
             heightStomachAche.constant = 0.0
             threeSub.hidden = true
         }
@@ -320,6 +436,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segmentSwallowing.selectedSegmentIndex == 0)
         {
+            q4s = -1
+
             heightSwallowing.constant = 0.0
             four_sub.hidden = true
         }
@@ -364,6 +482,7 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segmentStuck.selectedSegmentIndex == 0)
         {
+            q5s = -1
             heightFoodStuckFive.constant = 0.0
             fiveSub.hidden = true
         }
@@ -407,6 +526,7 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(segmentSwallow.selectedSegmentIndex == 0)
         {
+            q6s = -1
             heightSixSub.constant = 0.0
             six_sub.hidden = true
         }
@@ -452,6 +572,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(throwUpSegment.selectedSegmentIndex == 0)
         {
+            q7s = -1
+
             heightSevenSub.constant = 0.0
             sevenSub.hidden = true
         }
@@ -494,6 +616,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(nauseaSegement.selectedSegmentIndex == 0)
         {
+            q8s = -1
+
             heightEightSub.constant = 0.0
             eightSub.hidden = true
         }
@@ -534,6 +658,8 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         
         if(foodBackSegement.selectedSegmentIndex == 0)
         {
+            q9s = -1
+
             heightNineSub.constant = 0.0
             nineSub.hidden = true
         }
@@ -606,6 +732,26 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
         return ""
     }
     
+    
+    func subreturnLblStatus(index: Int) -> String{
+        
+        switch index {
+        case 0:
+            return "Not Bad at all"
+        case 1:
+            return "A little bad"
+        case 2:
+            return "Kind of bad"
+        case 3:
+            return "Bad"
+        case 4:
+            return "Very bad"
+            
+        default:
+            break
+        }
+        return ""
+    }
 
     //MARK: - sub segements
     
@@ -613,61 +759,75 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
     @IBAction func OneSub(sender: AnyObject) {
       
         
-        oneSub.text = returnLblStatus(oneSubSegement.selectedSegmentIndex)
-        
+        oneSub.text = subreturnLblStatus(oneSubSegement.selectedSegmentIndex)
+        q1s = oneSubSegement.selectedSegmentIndex
     }
     
     
     @IBAction func twoSub(sender: AnyObject) {
-         twoSub.text = returnLblStatus(twoSubSegement.selectedSegmentIndex)
+         twoSub.text = subreturnLblStatus(twoSubSegement.selectedSegmentIndex)
+        q2s = twoSubSegement.selectedSegmentIndex
+
     }
     
     
     @IBAction func threeSub(sender: AnyObject) {
-        threeSubLbl.text = returnLblStatus(threeSubSegement.selectedSegmentIndex)
+        threeSubLbl.text = subreturnLblStatus(threeSubSegement.selectedSegmentIndex)
+        q3s = threeSubSegement.selectedSegmentIndex
 
     }
     
     
     @IBAction func fourSub(sender: AnyObject) {
-        fourSubLbl.text = returnLblStatus(fourSubSegement.selectedSegmentIndex)
+        fourSubLbl.text = subreturnLblStatus(fourSubSegement.selectedSegmentIndex)
+        q4s = fourSubSegement.selectedSegmentIndex
 
     }
     
     
     
     @IBAction func fiveSub(sender: AnyObject) {
-        fiveSubLbl.text = returnLblStatus(fiveSubSegement.selectedSegmentIndex)
+        fiveSubLbl.text = subreturnLblStatus(fiveSubSegement.selectedSegmentIndex)
+        q5s = fiveSubSegement.selectedSegmentIndex
 
     }
     
     
     @IBAction func sixSub(sender: AnyObject) {
-        sixSubLbl.text = returnLblStatus(sixSubSegement.selectedSegmentIndex)
+        sixSubLbl.text = subreturnLblStatus(sixSubSegement.selectedSegmentIndex)
+        q6s = sixSubSegement.selectedSegmentIndex
 
     }
     
     @IBAction func sevenSub(sender: AnyObject) {
-        eightSubLbl.text = returnLblStatus(sevenSubSegement.selectedSegmentIndex)
+        eightSubLbl.text = subreturnLblStatus(sevenSubSegement.selectedSegmentIndex)
+        q7s = sevenSubSegement.selectedSegmentIndex
 
     }
     
     
     @IBAction func eightSub(sender: AnyObject) {
         
-        nineSubLbl.text = returnLblStatus(eightSubSegment.selectedSegmentIndex)
+        nineSubLbl.text = subreturnLblStatus(eightSubSegment.selectedSegmentIndex)
+        q8s = eightSubSegment.selectedSegmentIndex
 
     }
     
     @IBAction func nineSub(sender: AnyObject) {
         
-        tenSubLbl.text = returnLblStatus(nineSubSegement.selectedSegmentIndex)
+        tenSubLbl.text = subreturnLblStatus(nineSubSegement.selectedSegmentIndex)
+        q9s = nineSubSegement.selectedSegmentIndex
 
     }
     
     
     
     @IBAction func submit(sender: AnyObject) {
+ 
+        resultMethod()
+    }
+    
+    func resultMethod(){
         freq_count = counter(q1f) + counter(q2f) + counter(q3f) + counter(q4f) + counter(q5f) + counter(q6f) + counter(q7f) + counter(q8f) + counter(q9f) + counter(q10f) + counter(q11f)
         freq_score = scoreCalc(q1f) + scoreCalc(q2f) + scoreCalc(q3f) + scoreCalc(q4f) + scoreCalc(q5f) + scoreCalc(q6f) + scoreCalc(q7f) + scoreCalc(q8f) + scoreCalc(q9f) + scoreCalc(q10f) + scoreCalc(q11f)
         
@@ -739,6 +899,7 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
             sev_score = sev_score / (9 - Double(sev_count))
         }
         
+        hideUnhideActivity(false)
         service.delegate = self
         service.insertSymptoms("\(q1f)", q1s: "\(q1s)", q2f: "\(q2f)", q2s: "\(q2s)", q3f: "\(q3f)", q3s: "\(q3s)", q4f: "\(q4f)", q4s: "\(q4s)", q5f: "\(q5f)", q5s: "\(q5s)", q6f: "\(q6f)", q6s: "\(q6s)", q7f: "\(q7f)", q7s: "\(q7s)", q8f: "\(q8f)", q8s: "\(q8s)", q9f: "\(q9f)", q9s: "\(q9s)", q10f: "\(q10f)", q11f: "\(q11f)", freq_score: "\(freq_score)", sev_score: "\(sev_score)", tot_score: "\(tot_score)",dysphagia: "\(dysphagia)", gerd: "\(gerd)", nausea: "\(nausea)", pain: "\(pain)")
         
@@ -783,27 +944,56 @@ class SymptomViewController: UIViewController,PortalServiceDelegate {
     }
     
     func successForInsertSymptoms(success: String) {
-        alertViewFunc("successfully inserted symptoms")
+        let currentDate = NSDate()
+        NSUserDefaults.standardUserDefaults().setValue(currentDate, forKey: "symptomsDate")
+        hideUnhideActivity(true)
+        hideForm()
+       
+        //alertViewFunc("successfully inserted symptoms")
     }
     
     func FailureForInsertSumptoms(error: String) {
+        hideUnhideActivity(true)
         alertViewFunc("failed to insert symptoms")
+    }
+    
+    func FailureForInsertSymptomsError(error: String){
+        resultMethod()
     }
     
     func alertViewFunc(msg: String)  {
         
-        
-        let alertController = UIAlertController(title: "\(msg)", message: "", preferredStyle: .Alert)
-        
-        let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
-        alertController.addAction(defaultAction)
-        
-        presentViewController(alertController, animated: true, completion: nil)
+        dispatch_async(dispatch_get_main_queue()) {
+            let alertController = UIAlertController(title: "\(msg)", message: "", preferredStyle: .Alert)
+            
+            let defaultAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+            alertController.addAction(defaultAction)
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
         
     }
 
     
-    
+    func hideUnhideActivity(bool: Bool){
+        
+        viewForActivityIndicator.hidden = bool
+        
+        if bool == false {
+            self.view.bringSubviewToFront(self.viewForActivityIndicator)
+            // activityIndicator.center = scrollView.center
+            activityIndicator.startAnimating()
+        }else{
+            
+            self.viewForActivityIndicator.center = self.scrollView.center
+            dispatch_async(dispatch_get_main_queue(), {
+                self.view.bringSubviewToFront(self.scrollView)
+                self.activityIndicator.stopAnimating()
+                self.viewForActivityIndicator.hidden = bool
+                // self.viewForActivityIndicator.removeFromSuperview()
+            })
+        }
+    }
     
     
     

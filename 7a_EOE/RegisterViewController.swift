@@ -8,6 +8,8 @@ import UIKit
 
 class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,PortalServiceDelegate {
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var viewForActivityIndicator: UIView!
     @IBOutlet weak var householdBtn: UIButton!
     @IBOutlet weak var motherBtn: UIButton!
     @IBOutlet weak var fatherBtn: UIButton!
@@ -30,7 +32,8 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var frontView: UIView!
     
-    
+    var coreData = CoreDataHelper()
+
     var genderArray = [String]()
     var raceArray = [String]()
     var gradeArray = [String]()
@@ -55,6 +58,11 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
         incomeArray = ["Less than $10,000","$10,000 to $14,999","$15,000 to $24,999","$25,000 to $34,999,","$35,000 to $49,999","$75,000 to $99,999","100,000 or more"]
         EoEArray = ["Less than a year","1-5 years","More than 5 years"]
         
+        self.datePicker.backgroundColor = UIColor.grayColor()
+          self.customPicker.backgroundColor = UIColor.grayColor()
+        hideUnhideActivity(true)
+        
+       // NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(showDatePicker()), name: UIKeyboardDidHideNotification, object: nil)
         
     }
 
@@ -72,6 +80,8 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
         service.delegate = self
         service.insertUserNameAndPassword(nameTxt.text!, password: passwordTxt.text!, email: emailTxt.text!, DOB: (DobBtn.titleLabel?.text)!, gender: (genderBtn.titleLabel?.text)!, race: (raceBtn.titleLabel?.text)!, hispanic: (hispanicBtn.titleLabel?.text)!, grade: (gradebtn.titleLabel?.text)!, eoe: (EOEBtn.titleLabel?.text)!
             , father: (fatherBtn.titleLabel?.text)!, mother: (motherBtn.titleLabel?.text)!, income: (householdBtn.titleLabel?.text)!)
+            
+            hideUnhideActivity(false)
          }else{
             
            alertViewFunc("Please fill all the fields")
@@ -79,20 +89,53 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
     }
     
     
+    
+    
+    @IBAction func tap(sender: AnyObject) {
+        resign()
+    }
     @IBAction func DOBbtn(sender: AnyObject) {
-        
+    
         showDatePicker()
-        
     }
     
     
     func showDatePicker(){
-      
-    self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
-        self.frontView.userInteractionEnabled = false
-        self.datePicker.hidden = false
-        self.dateToolbar.hidden = false
+     // resign()
+
+    
+       UIView.animateWithDuration(0, animations: { 
+                    self.emailTxt.resignFirstResponder()
+            self.passwordTxt.resignFirstResponder()
+                    self.nameTxt.resignFirstResponder()
+        }) { (Bool) in
+            
+            self.frontView.userInteractionEnabled = false
+            self.datePicker.hidden = false
+            self.dateToolbar.hidden = false
+            self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
+        }
+            
+                      
+
+           
+//            self.emailTxt.resignFirstResponder()
+//            self.passwordTxt.resignFirstResponder()
+//            self.nameTxt.resignFirstResponder()
+//            
         
+        
+      
+       
+
+        
+        
+    }
+    
+    func resign(){
+       
+        //showDatePicker()
+
     }
     
     func hideDatePicker(){
@@ -105,14 +148,22 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
         
     }
     
+   
     
     func showCustomPicker(){
         
-        self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
-        self.frontView.userInteractionEnabled = false
-        self.customPicker.hidden = false
-        self.customToolbar.hidden = false
-        
+      
+        UIView.animateWithDuration(0, animations: {
+            self.emailTxt.resignFirstResponder()
+            self.passwordTxt.resignFirstResponder()
+            self.nameTxt.resignFirstResponder()
+        }) { (Bool) in
+            
+            self.scrollView.frame = CGRectMake(0, self.scrollView.frame.origin.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height-260);
+            self.frontView.userInteractionEnabled = false
+            self.customPicker.hidden = false
+            self.customToolbar.hidden = false
+        }
     }
     
     func hideCustomPicker(){
@@ -340,27 +391,54 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
         textField.resignFirstResponder()
         return true
     }
+  
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
+        self.emailTxt.resignFirstResponder()
+        nameTxt.resignFirstResponder()
         passwordTxt.resignFirstResponder()
     }
     
     //MARK: service delegates
     
     func successForInsertuser(success: String) {
-        print("success:\(success)")
+        
+        coreData.deleteAllData("Food")
 
         
+        print("success:\(success)")
         
-        NSUserDefaults.standardUserDefaults().setValue(success, forKey: "UserId")
+                let appDomain = NSBundle.mainBundle().bundleIdentifier!
+                NSUserDefaults.standardUserDefaults().removePersistentDomainForName(appDomain)
+                NSUserDefaults.standardUserDefaults().synchronize()
+
+        
+        hideUnhideActivity(true)
+
+        if success.characters.count > 0  {
+            
+            
+            
+            NSUserDefaults.standardUserDefaults().setValue(success, forKey: "UserId")
+            performSegueWithIdentifier("home", sender: self)
+            
+            
+        }
+        else
+        {
+            service.delegate = self
+            service.insertUserNameAndPassword(nameTxt.text!, password: passwordTxt.text!, email: emailTxt.text!, DOB: (DobBtn.titleLabel?.text)!, gender: (genderBtn.titleLabel?.text)!, race: (raceBtn.titleLabel?.text)!, hispanic: (hispanicBtn.titleLabel?.text)!, grade: (gradebtn.titleLabel?.text)!, eoe: (EOEBtn.titleLabel?.text)!
+                , father: (fatherBtn.titleLabel?.text)!, mother: (motherBtn.titleLabel?.text)!, income: (householdBtn.titleLabel?.text)!)
+            
+            hideUnhideActivity(false)
+        }
         
         
-        performSegueWithIdentifier("home", sender: self)
 
     }
     
     func FailureForInsertuser(error: String) {
+        hideUnhideActivity(true)
         alertViewFunc("Please try registering again")
 
         print("failed")
@@ -378,5 +456,32 @@ class RegisterViewController: UIViewController,UITextFieldDelegate,UIPickerViewD
         presentViewController(alertController, animated: true, completion: nil)
         
     }
+    
+   
+    
+    
+    func hideUnhideActivity(bool: Bool){
+        
+        viewForActivityIndicator.hidden = bool
+        
+        if bool == false {
+            self.view.bringSubviewToFront(self.viewForActivityIndicator)
+            // activityIndicator.center = scrollView.center
+            activityIndicator.startAnimating()
+        }else{
+            
+            self.viewForActivityIndicator.center = self.scrollView.center
+            dispatch_async(dispatch_get_main_queue(), {
+                self.view.bringSubviewToFront(self.scrollView)
+                self.activityIndicator.stopAnimating()
+                self.viewForActivityIndicator.hidden = bool
+                // self.viewForActivityIndicator.removeFromSuperview()
+            })
+        }
+    }
 
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        textField.resignFirstResponder()
+    }
 }

@@ -47,6 +47,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
         }
 
+        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor.whiteColor()], forState:.Selected)
+    // UITabBar.appearance().barTintColor = UIColor.whiteColor()
+        UIApplication.sharedApplication().statusBarStyle = .LightContent
+
+
         // Override point for customization after application launch.
         return true
     }

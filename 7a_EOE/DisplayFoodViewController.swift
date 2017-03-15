@@ -11,23 +11,53 @@ import SDWebImage
 
 class DisplayFoodViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,PortalServiceDelegate,CoreDataHelperDelegate {
 
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var viewForActivityIndicator: UIView!
     var foodArray = [FoodModel]()
-    var service = PortalService()
     var core = CoreDataHelper()
-
+    var service = PortalService()
     
     @IBOutlet weak var tableview: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        hideUnhideActivity(true)
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(animated: Bool) {
-//        service.delegate = self
-//        service.getFoodDiary()
+        
+       
+        
         core.delegate = self
+
         core.retriveFood()
+
+        hideUnhideActivity(false)
+    }
+    
+    func successForGetFood(success: NSArray) {
+        
+        if success.count > 0{
+            core.insertFoodItems(success)
+        }
+        
+        
+    }
+    
+    
+    
+    func successForInserfoodCore(success: String) {
+        core.retriveFood()
+
+    }
+    
+    func FailureForinsertFoodCore(error: String) {
+        
+    }
+    
+    
+    func FailureForGetFood(error: String) {
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,13 +72,25 @@ class DisplayFoodViewController: UIViewController,UITableViewDelegate,UITableVie
    
     
     func successForRetfoodCore(success: NSArray) {
-        foodArray = []
-        foodArray = success as! [FoodModel]
-        self.tableview.reloadData()
+        
+        if success.count < 0 {
+            service.delegate = self
+            service.getFoodDiary()
+        }else{
+            foodArray = []
+            foodArray = success as! [FoodModel]
+            hideUnhideActivity(true)
+            
+            self.tableview.reloadData()
+        }
+       
     }
     
     func FailureForRetFoodCore(error: String) {
-        
+        service.delegate = self
+        service.getFoodDiary()
+        hideUnhideActivity(true)
+
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -63,12 +105,12 @@ class DisplayFoodViewController: UIViewController,UITableViewDelegate,UITableVie
         foodModel = foodArray[indexPath.row]
         
         
-        cell.mealType.text = foodModel.mealType
-        cell.company.text = foodModel.companyToEat
-        cell.placeEat.text = foodModel.placeYouAte
-        cell.beforeSymp.text = foodModel.beforeSymptom
-        cell.afterSymp.text = foodModel.afterSymptom
-        cell.worried.text = foodModel.worry
+        cell.mealType.text = "Meal type: \(foodModel.mealType!)"
+        cell.company.text = "Company: \(foodModel.companyToEat!)"
+        cell.placeEat.text = "Place: \(foodModel.placeYouAte!)"
+        cell.beforeSymp.text = "Before symptom: \(foodModel.beforeSymptom!)"
+        cell.afterSymp.text = "After symptom: \(foodModel.afterSymptom!)"
+        cell.worried.text = "Worried: \(foodModel.worry!)"
         print("foodModelStr:\(foodModel.foodImg!)")
         
         let url : NSString = foodModel.foodImg!
@@ -81,39 +123,26 @@ class DisplayFoodViewController: UIViewController,UITableViewDelegate,UITableVie
         return cell
     }
     
-    func successForGetFood(success: NSArray) {
-        
-        foodArray = []
 
-        if success.count > 0 {
-            
-            print("count:\(success)")
-            
-            for res in (success  as? [[String:String]])! {
-                
-                let food = FoodModel()
-               food.afterSymptom = "\(res["feelBefore"]!)"
-                food.beforeSymptom = "\(res["feelAfter"]!)"
-               food.worry = "\(res["worry"]!)"
-               food.companyToEat = "\(res["partner"]!)"
-                food.placeYouAte = "\(res["location"]!)"
-                food.mealType = "\(res["meal"]!)"
-                food.foodImg = "https://people.cs.clemson.edu/~rraju/eoeScripts/eoeImgs/\(res["image"]!)"
-                //print("\(food.foodImg)")
-
-                foodArray.append(food)
-            }
-            
-            tableview.reloadData()
-            
-        }
-        
-    }
     
-    func FailureForGetFood(error: String) {
+    func hideUnhideActivity(bool: Bool){
         
+        viewForActivityIndicator.hidden = bool
+        
+        if bool == false {
+           
+            // activityIndicator.center = scrollView.center
+            activityIndicator.startAnimating()
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.activityIndicator.stopAnimating()
+                self.viewForActivityIndicator.hidden = bool
+                // self.viewForActivityIndicator.removeFromSuperview()
+            })
+        }
     }
-
     /*
     // MARK: - Navigation
 

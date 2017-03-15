@@ -15,9 +15,9 @@ class AboutViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableArray = ["Version","Developers","Contact","Summary","Acknowledgements"]
+        tableArray = ["Version","Developers"]
         
-subTableArray = ["1.0","Rohith Raju,Sagar Thakur","Shoot a mail","Who needs this app?",""]
+        subTableArray = ["1.0","Rohith Raju,Sagar Thakur"]
         // Do any additional setup after loading the view.
     }
 
