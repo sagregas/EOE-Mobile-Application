@@ -2,9 +2,7 @@
 //  SettingsTableViewController.swift
 //  7a_EOE
 //
-//  Created by Rohith Raju on 11/20/16.
-//  Copyright © 2016 Rohith Raju. All rights reserved.
-//
+
 
 import UIKit
 
